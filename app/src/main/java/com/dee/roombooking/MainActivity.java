@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                 }
                 if(TextUtils.isEmpty(etChildren.getText()))
                 {
-                    etChildren.setError("Enter no of childs");
+                    etChildren.setError("Enter no of children");
                     return;
                 }
                 if(TextUtils.isEmpty(etRoom.getText()))

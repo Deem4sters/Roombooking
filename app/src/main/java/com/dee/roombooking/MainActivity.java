@@ -1,10 +1,8 @@
 package com.dee.roombooking;
 
+
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.os.Bundle;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -16,175 +14,159 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
-public class MainActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener{
-    TextView checkin, checkout, type, txtResult, txtFirst, txtSecond;
+public class MainActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
+
+    TextView checkin, checkout, txtResult, txtPrice;
     Spinner SpinnerRoom;
+    EditText etAdult, etChild, etRoom;
     Button btnCalculate;
-    EditText etAdult, etChildren, etRoom;
-    Boolean a1, a2;
+    int year1, year2;
+    int month1, month2;
+    int day1, day2;
+    int adult, children, room;
+    double total, roomPrice, vat, grossTotal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        checkin = findViewById(R.id.checkin);
+        // Binding
+       checkin = findViewById(R.id.checkin);
         checkout = findViewById(R.id.checkout);
-        type = findViewById(R.id.type);
         txtResult = findViewById(R.id.txtResult);
-        txtFirst = findViewById(R.id.txtFirst);
-        txtSecond = findViewById(R.id.txtSecond);
+        txtPrice = findViewById(R.id.txtPrice);
         SpinnerRoom = findViewById(R.id.SpinnerRoom);
-        btnCalculate = findViewById(R.id.btnCalculate);
         etAdult = findViewById(R.id.etAdult);
-        etChildren = findViewById(R.id.etChildren);
+        etChild = findViewById(R.id.etChildren);
         etRoom = findViewById(R.id.etRoom);
+        btnCalculate = findViewById(R.id.btnCalculate);
 
-      checkin.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            loadDatePickercheckin();
-            a1=true;
-          }
-      });
-
-      checkout.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-              loadDatePickercheckout();
-              a2=true;
-          }
-      });
-        String room[] = {"Select room type", "Deluxe -Rs. 2000", "Presidential -Rs. 5000", "Premium- Rs. 4000"};
-        ArrayAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, room);
+        // Data in array for spinner (Different Rooms)
+        final String rooms[] = {"Delux - Rs. 2000", "Presidential - Rs. 5000", "Premium - Rs. 4000"};
+        ArrayAdapter adapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_list_item_1,
+                rooms
+        );
         SpinnerRoom.setAdapter(adapter);
+
+        // For Checkin Date
+        checkin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadCheckinDate();
+            }
+        });
+
+        // For Checkout Date
+        checkout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadCheckoutDate();
+            }
+        });
 
         btnCalculate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               int adult, child, room;
-               double total,price,vat,GrossTotal;
+
+                // Validation
+                if (TextUtils.isEmpty(etAdult.getText())) {
+                    etAdult.setError("Please enter number of adult.");
+                    return;
+                }
+                if (TextUtils.isEmpty(etChild.getText())) {
+                    etChild.setError("Please enter number of children.");
+                    return;
+                }
+                if (TextUtils.isEmpty(etRoom.getText())) {
+                    etRoom.setError("Please enter number of rooms.");
+                    return;
+                }
+
+
+                Calendar c = Calendar.getInstance();
+                c.set(year1, month1, day1);
+                Calendar c1 = Calendar.getInstance();
+                c1.set(year2, month2, day2);
+
+                //Calculating the difference in selected dates
+                long diffMillis = c1.getTimeInMillis() - c.getTimeInMillis();
+                long daysDiff = (diffMillis / (24 * 60 * 60 * 1000));
+
 
                 adult = Integer.parseInt(etAdult.getText().toString());
-                child = Integer.parseInt(etChildren.getText().toString());
+                children = Integer.parseInt(etChild.getText().toString());
                 room = Integer.parseInt(etRoom.getText().toString());
 
 
-                if(TextUtils.isEmpty(etAdult.getText()))
-                {
-                    etAdult.setError("Enter no of Adults");
-                    return;
+                // Defining the price of different rooms
+                if (SpinnerRoom.getSelectedItem() == "Deluxe - Rs. 2000") {
+                    txtPrice.setText("2000");
                 }
-                if(TextUtils.isEmpty(etChildren.getText()))
-                {
-                    etChildren.setError("Enter no of children");
-                    return;
+                if (SpinnerRoom.getSelectedItem() == "Presidential - Rs. 5000") {
+                    txtPrice.setText("5000");
                 }
-                if(TextUtils.isEmpty(etRoom.getText()))
-                {
-                    etRoom.setError("Enter no of rooms");
-                    return;
+                if (SpinnerRoom.getSelectedItem() == "Premium - Rs. 4000") {
+                    txtPrice.setText("4000");
                 }
 
+                roomPrice = Double.parseDouble(txtPrice.getText().toString());
 
-                if (SpinnerRoom.getSelectedItem() == "Deluxe -Rs. 2000") {
-                    txtSecond.setText("2000");
+                total = roomPrice * room * daysDiff;
+                vat = total * 0.13;
+                grossTotal = total + vat;
 
-
-                }
-                if (SpinnerRoom.getSelectedItem() == "Presidential -Rs. 5000") {
-                    txtSecond.setText("5000");
-
-
-                }
-                if (SpinnerRoom.getSelectedItem() == "Premium- Rs. 4000") {
-                    txtSecond.setText("4000");
-
-                }
-                price=Integer.parseInt(txtSecond.getText().toString());
-                total=price*room;
-                vat=0.13*total;
-                GrossTotal = total +vat;
-
-                //int diff=Integer.parseInt(tvSecond.getText().toString())-Integer.parseInt(tvFirst.getText().toString());
-
-
-                txtFirst.setText("Total: Rs." + total+"\n"+"Vat Rs.:"+vat+"\n"+"Gross Total: Rs."+GrossTotal);
-
+                // Displaying Result
+                txtResult.setText("Total: Rs." + total + "\n" + "Vat Rs.:" + vat + "\n" + "Gross Total: Rs." + grossTotal);
             }
         });
-
-    }
-    private void loadDatePickercheckin() {
-        final Calendar c = Calendar.getInstance();
-        int year = c.get(Calendar.YEAR);
-        int day = c.get(Calendar.DAY_OF_MONTH);
-        int month = c.get(Calendar.MONTH);
-
-        DatePickerDialog datePickerDialog = new DatePickerDialog(this, this, year, month, day);
-        datePickerDialog.show();
     }
 
 
-
-
-
-    private void loadDatePickercheckout() {
-        final Calendar c = Calendar.getInstance();
-        int year = c.get(Calendar.YEAR);
-        int day = c.get(Calendar.DAY_OF_MONTH);
-        int month = c.get(Calendar.MONTH);
-
-
-        txtSecond.setText(c.getTime() + "");
-
-
-        DatePickerDialog datePickerDialog = new DatePickerDialog(this, this, year, month, day);
-        datePickerDialog.show();
-    }
-
-
+    // Show selected checkin dates to users
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+        String date = "Check in Date: \n" + (month + 1) + "/" + dayOfMonth + "/" + year;
+        day1 = dayOfMonth;
+        month1 = month;
+        year1 = year;
+        checkin.setText(date);
+    }
 
-        month = month + 1;
+    private void loadCheckinDate() {
+        final java.util.Calendar c = java.util.Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
 
-        if (a1 == true) {
-            String date = "Checking Date: " + month + "/" + dayOfMonth + "/" + year;
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                this, this, year, month, day);
+        datePickerDialog.show();
+    }
 
-            //SimpleDateFormat format=new SimpleDateFormat("dd/MM/yyyy");
-            // // try {
-            //     Date dateCheckout=format.parse(date);
-            //  }
-            //  catch (ParseException e)
-            //  {
-            //      e.printStackTrace();
-            //  }
-            checkin.setText(date);
 
-            a1 = false;
-            return;
+    // Show selected checkout dated to users
+    private void loadCheckoutDate() {
+        final java.util.Calendar c = java.util.Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
 
-        }
-        if (a2 = true) {
-            String date = "Check out Date: " + month + "/" + dayOfMonth + "/" + year;
-            checkout.setText(date);
-            // SimpleDateFormat format=new SimpleDateFormat("dd/MM/yyyy");
-            // try {
-            //     Date dateCheckout=format.parse(date);
-            // }
-            // catch (ParseException e)
-            // {
-            //     e.printStackTrace();
-            // }
-
-            a2 = false;
-            return;
-        }
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                this, new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                String date = "Check out Date: \n" + (month + 1) + "/" + dayOfMonth + "/" + year;
+                day2 = dayOfMonth;
+                month2 = month;
+                year2 = year;
+                checkout.setText(date);
+            }
+        }, year, month, day);
+        datePickerDialog.show();
     }
 }

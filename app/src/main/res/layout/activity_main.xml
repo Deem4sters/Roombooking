@@ -9,35 +9,58 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:id="@+id/checkinDate"
-        android:layout_width="wrap_content"
+        android:id="@+id/room"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Check Date"/>
+        android:gravity="center"
+        android:hint="Room booking system"
+        android:text="Room Booking System"
+        android:textSize="30sp"
+        android:textColor="@color/white"
+        android:background="@drawable/background"/>
+
+    <TextView
+        android:id="@+id/checkinDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Check In Date"
+        android:inputType="textEmailAddress"
+        android:drawablePadding="6sp"
+        android:background="@drawable/input_back"
+
+        />
 
     <TextView
         android:id="@+id/checkoutDate"
-        android:layout_width="wrap_content"
+        android:drawablePadding="6sp"
+        android:layout_width="match_parent"
+        android:background="@drawable/input_back"
         android:layout_height="wrap_content"
-        android:hint="Checkout Date"/>
-
+        android:hint="Check Out Date"/>
     <TextView
         android:id="@+id/txtSpinner"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/input_back"
         android:hint="Select room type"/>
 
     <Spinner
         android:id="@+id/SpinnerRoom"
         android:layout_gravity="right"
+        android:background="@drawable/input_back"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
 
     <Button
-        android:id="@+id/BtnCalculate"
-        android:layout_width="match_parent"
+        android:id="@+id/calculate"
+        android:text="Calculate"
+        android:textSize="30sp"
+        android:textColor="@color/white"
+        android:layout_width="190sp"
         android:layout_height="wrap_content"
-        android:text="Calculate"/>
+        android:background="@drawable/background"/>
+
 
 
 
